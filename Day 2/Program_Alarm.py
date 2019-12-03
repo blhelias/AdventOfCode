@@ -12,7 +12,7 @@ def programm_alarm(sequence):
         else:
             print("error")
     return ",".join(sequence)
-            
+
 
 if __name__ == "__main__":
     assert programm_alarm("1,0,0,0,99".split(",")) == "2,0,0,0,99"
@@ -47,6 +47,3 @@ if __name__ == "__main__":
 
                 if compute_memory_0 == "19690720":
                     print(noun, verb)
-
-
-

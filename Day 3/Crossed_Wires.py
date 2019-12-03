@@ -16,15 +16,15 @@ def draw_wire(instructions: List[Instruction], wire_id):
             if instruction.dir == "U":
                 # increment Y
                 coor_y += 1
-                
+
             elif instruction.dir == "D":
                 # decrement y
                 coor_y -= 1
-                
+
             elif instruction.dir == "R":
                 # increment x
                 coor_x += 1
-                
+
             else:
                 # decrement x
                 coor_x -= 1
@@ -47,7 +47,7 @@ def steps(intersection: Point, points: List[Point]):
 
 if __name__ == "__main__":
     # test1 = ["R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"]
-    # test2 = ["R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"]   
+    # test2 = ["R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"]
     p0 = Point(0, 0)
     # read Input file
     with open("input.txt", "r") as input_file:
@@ -57,7 +57,7 @@ if __name__ == "__main__":
             wire_inst_list = wire_instruction.split(",")
             wire_instructions = [convert_instruction(i) for i in wire_inst_list]
             l.append(draw_wire(wire_instructions, wire_id))
-        
+
         intersections = get_intersections(l[0], l[1])
 
         min_dist = float('Inf')
@@ -68,7 +68,7 @@ if __name__ == "__main__":
             distance = manhattan_dist(intersection, p0)
             if distance < min_dist:
                 min_dist = distance
-            
+
             # get the number of steps for each intersections
             # and print the min one
             step1 = steps(intersection, l[0])
@@ -78,12 +78,8 @@ if __name__ == "__main__":
 
             if wire_steps < min_step:
                 min_step = wire_steps
-            
+
         print(min_dist)
         print(min_step)
 
         input_file.close()
-
-
-
-
