@@ -14,19 +14,15 @@ def draw_wire(instructions: List[Instruction], wire_id):
     for instruction in instructions:
         for _ in range(instruction.dist):
             if instruction.dir == "U":
-                # increment Y
                 coor_y += 1
 
             elif instruction.dir == "D":
-                # decrement y
                 coor_y -= 1
 
             elif instruction.dir == "R":
-                # increment x
                 coor_x += 1
 
             else:
-                # decrement x
                 coor_x -= 1
 
             p = Point(coor_x, coor_y)
@@ -35,6 +31,7 @@ def draw_wire(instructions: List[Instruction], wire_id):
     return wire
 
 def manhattan_dist(p1: Point, p2: Point):
+    """|x1 - x2| + |y1 - y2|"""
     return (abs(p1.x-p2.x) + abs(p1.y-p2.y))
 
 def get_intersections(list1: List[Point], list2: List[Point]):
@@ -46,8 +43,9 @@ def steps(intersection: Point, points: List[Point]):
             return step + 1
 
 if __name__ == "__main__":
-    # test1 = ["R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"]
-    # test2 = ["R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"]
+    test1 = ["R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"]
+    test2 = ["R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"]
+
     p0 = Point(0, 0)
     # read Input file
     with open("input.txt", "r") as input_file:
