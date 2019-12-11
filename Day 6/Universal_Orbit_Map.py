@@ -1,14 +1,13 @@
 from collections import namedtuple, Counter
 from typing import Dict, List
 
+
 class Planet:
-    """a planet is an object that can have direct
-    or indirect orbit"""
+    """A planet is an object that can have direct
+        or indirect orbit"""
     def __init__(self, name):
         self.name = name
-        self.scratch = False
         self.orbit = None # only one planet possible !
-        self.prev = None
     
     def search(self):
         counter  = 0
@@ -21,7 +20,6 @@ class Planet:
 
         while True:
             counter += 1
-
             if p.name == "COM":
                 return counter, transfers
             else:
@@ -40,6 +38,7 @@ class Planet:
     def __repr__(self):
         return "{name} orbits around {orbit} ! ".format(orbit=self.orbit, name=self.name)
 
+
 class Orbit:
     """an orbit is a set of 2 planet"""
     def __init__(self, planet: Planet) -> None:
@@ -47,6 +46,7 @@ class Orbit:
 
     def __repr__(self):
         return self.planet.name
+
 
 class Map:
     """a map is a set of direct orbit between 2 planets"""
@@ -78,30 +78,26 @@ class Map:
             v = self.get_planet(planet_duo[0])
             w = self.get_planet(planet_duo[1])
             self.add_orbit(v, w)
-    
 
-    
-    
+
+def remove_intersection(list1, list2):
+    return list(set(transfer1)^set(transfer2))
+
+
 if __name__ == "__main__":
     orbit_graph = Map()
-    orbit_graph.build("input.txt") # 
+    orbit_graph.build("input.txt")
     # pour chaque planet, retracer le nombre d'orbit
     # indirect jusqu'a la planete de base COM
     transfers_list = []
     for planet_name, planet_value in orbit_graph.orbit_map.items():
         if planet_name == "YOU" or planet_name == "SAN":
-            total_orbit, transfers = planet_value.search()
+            total_orbit, transfers = planet_value.search() # specifice a part 2
             transfers_list.append(transfers)
-        # reponse += planet_value.search()     
+        # reponse += planet_value.search()  # Part 1
+    # print(response) 
 
-    transfer1 = transfers_list[0][:-1]
-    transfer2 = transfers_list[1][:-1]
-    # print(len(set(transfer1 + transfer2)))
+    transfer1 = transfers_list[0]
+    transfer2 = transfers_list[1]
 
-    # print(len(set(transfer1 - transfer2)))
-    # print(len(set(transfer2 - transfer1)))
-    res = list(set(transfer1)^set(transfer2))
-    print(len(res))
-
-    # print(len(transfer1 + transfer2) - len(set(transfer1 + transfer2)))
-    # print(response)  
+    print(len(remove_intersection(transfer1, transfer2)))

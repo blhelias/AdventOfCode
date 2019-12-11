@@ -26,13 +26,13 @@ Example:
 import os
 import copy
 
-# INPUT = "1"
-INPUT = "5"
+# # INPUT = "1"
+# INPUT = "5"
 
 def add_omitted_zeros(opcode: str) -> str:
     return '{:>05}'.format(opcode)
 
-def test_diagnostic(sequence):
+def test_diagnostic(sequence, intcode_input):
     instruction_pt = 0
     running = True
     OUTPUT = []
@@ -41,8 +41,6 @@ def test_diagnostic(sequence):
  
         opcode = sequence[instruction_pt]
         opcode_with_zeros = add_omitted_zeros(opcode)
-     
-        # print("opcode: " + opcode_with_zeros)
 
         if "99" in opcode_with_zeros:
             running = not running
@@ -64,7 +62,7 @@ def test_diagnostic(sequence):
                 OUTPUT.append(str(instr1))
             
             if opcode_with_zeros[-1] == "3":
-                sequence[int(sequence[instruction_pt+1])] = INPUT
+                sequence[int(sequence[instruction_pt+1])] = intcode_input
             
             increment = 2
 
@@ -84,7 +82,6 @@ def test_diagnostic(sequence):
                 else:
                     increment = 3
             else:
-
                 increment = 3
             
         else:
@@ -110,22 +107,17 @@ def test_diagnostic(sequence):
             increment = 4
         
         instruction_pt += increment
-    
-    print(",".join(OUTPUT))
-    print()
-    print(",".join(sequence))
    
-    return ",".join(sequence)
+    return ",".join(sequence), ",".join(OUTPUT)
 
 
 if __name__ == "__main__":
     # read Input file
+    INPUT = 5
     with open("input.txt", "r") as input_file:
-
         program = input_file.readline()
-        # PART 1
-        
         program_sequence = program.split(",")
-        print(program_sequence[:260])
         
-        test_diagnostic(program_sequence)
+        sequence, diagnostic = test_diagnostic(program_sequence, INPUT)
+
+        print(diagnostic)
