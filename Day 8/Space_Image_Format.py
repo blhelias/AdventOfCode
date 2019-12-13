@@ -8,10 +8,10 @@ def get_depth(image, layer_shape):
 def split(s):
     return [char for char in s]
 
-def repr(np_array, shape):
+def print_image(np_array, shape):
     counter = 0
-    for i in range(shape[0]):
-        for j in range(shape[1]):
+    for _ in range(shape[0]):
+        for _ in range(shape[1]):
             print(np_array[counter], end="")
             counter += 1
         print()
@@ -55,9 +55,8 @@ def decoding_image(image: str, layer_shape: Tuple[int, int]):
                 if reshaped_array[k, i, j] != 2:
                     response_image.append(reshaped_array[k, i, j])
                     break
-    repr(response_image, layer_shape)     
+    print_image(response_image, layer_shape)     
     return response_image
-
 
 
 if __name__ == "__main__":
@@ -76,8 +75,4 @@ if __name__ == "__main__":
         print(decrypt_image(image_puzzle, SHAPE))
 
         rep = decoding_image(image_puzzle, SHAPE)
-    
-
-
-
-
+        # YEHEX

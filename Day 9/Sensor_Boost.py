@@ -103,8 +103,6 @@ def core_intcode(sequence: List[str], intcode_input: List[str], instruction_pt: 
 
             elif opcode_with_zeros[-1] == "3":
                 try:
-                    # print("arg1", instr1)
-                    # print("input", intcode_input)
                     if opcode_with_zeros[2] == "2":
                         sequence[int(sequence[instruction_pt+1]) + relative_base] = intcode_input[input_counter]
                     else:
