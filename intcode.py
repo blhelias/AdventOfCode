@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # création d'un second handler qui va rediriger chaque écriture de log
 # sur la console

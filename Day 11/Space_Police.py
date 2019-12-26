@@ -6,20 +6,17 @@
 import logging
 import copy
 from typing import List, Dict, NamedTuple, Tuple
-from itertools import permutations
-from collections import namedtuple
 import numpy as np
 
 import sys 
 sys.path.append('..')
 import intcode
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-# création d'un second handler qui va rediriger chaque écriture de log
-# sur la console
+# Output logs in the console
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.INFO)
 logger.addHandler(stream_handler)
 
 
@@ -38,9 +35,15 @@ class Panel(NamedTuple):
         return str(self.point.x) + "," + str(self.point.y)
 
 def left_rotation(p1: Point, p2: Point):
+    """use rotation matrix to compute 90 degree rotation
+        p1 is the rotation center
+    """
     return Point(-(p2.y-p1.y)+p2.x, p2.x-p1.x+p2.y)
 
-def right_rotation(p1: Point, p2: Point): 
+def right_rotation(p1: Point, p2: Point):
+    """use rotation matrix to compute 90 degree rotation
+        p1 is the rotation center
+    """
     return Point(-(p1.y-p2.y)+p2.x, p1.x-p2.x+p2.y)
 
 if __name__ == "__main__":
@@ -48,32 +51,32 @@ if __name__ == "__main__":
         sequence = input_file.read()
         running = True
         pointer_address = 0
-        input_code_part1 = "0"
-        input_code_part2 = "1"
+        input_code = "0"  # PART 1
+        # input_code = "1"  # PART 2
         previous_panel = None
         panel_map = {}
         relative_base = 0
 
-        while running:
+        while True:
             sequence, output, status, pointer_address, relative_base = intcode.core_intcode(sequence=sequence.split(","), 
                                                                                             intcode_input=[input_code], 
                                                                                             pos=pointer_address,
                                                                                             relative_base_pos=relative_base)
             if status == 1:
-                running = False
+                break
 
             color = output.split(",")[0]
             direction = output.split(",")[1]
             
             if not previous_panel:
                 previous_panel = Panel(Point(0,0), color)
+
                 if direction == "0":
                     point = Point(-1, 0)
                 else:
                     point = Point(1, 0)
 
                 panel_map[previous_panel.__hash__()] = previous_panel
-                input_code = "0"
                 continue
             
             # Turn left or right according to the previous segment
@@ -93,7 +96,8 @@ if __name__ == "__main__":
             point = copy.deepcopy(next_point)
 
         logger.info(len(panel_map))
- 
+        logger.debug(panel_map)
+
         min_x = float("inf")
         max_x = float("-inf")
         min_y = float("inf")
@@ -101,25 +105,25 @@ if __name__ == "__main__":
         for _, panel in panel_map.items():
             if panel.point.x > max_x:
                 max_x = panel.point.x
-            elif panel.point.x < min_x:
+
+            if panel.point.x < min_x:
                 min_x = panel.point.x
-            elif panel.point.y > max_y:
+
+            if panel.point.y > max_y:
                 max_y = panel.point.y
-            elif panel.point.y < min_y:
+
+            if panel.point.y < min_y:
                 min_y = panel.point.y
         
-        # logger.info("max X: "+ str(max_x))
-        # logger.info("min X: "+ str(min_x))
-        # logger.info("max Y: "+ str(max_y))
-        # logger.info("min Y: "+ str(min_y))
-        X_range = range(-50, 45)
-        Y_range = range(-35, 35) 
-        grid = np.zeros((95, 70), int)
+        X_range = range(min_x, max_x+1)
+        Y_range = range(min_y, max_y+1) 
+        grid = np.zeros((abs(min_x-max_x)+1, abs(min_y-max_y)+1), int)
 
         for x in X_range:
             for y in Y_range:
                 hash_code = str(x) + "," + str(y)
                 if hash_code in panel_map:
-                    grid[x+50][y+35] = int(panel_map[hash_code].color)
+                    grid[x+abs(min_x)][y+abs(min_y)] = int(panel_map[hash_code].color)
         
-        logger.info('\n'.join(''.join(str(cell) for cell in row) for row in grid)) # GREJALPR
+        print('\n'.join(''.join(str(cell) for cell in row) for row in grid)) # GREJALPR
+        input_file.close()
