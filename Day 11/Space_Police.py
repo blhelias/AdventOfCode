@@ -1,9 +1,3 @@
-"""
-- First, it will output a value indicating the color to paint the panel the robot is over: 0 means to paint the panel black, and 1 means to paint the panel white.
-- Second, it will output a value indicating the direction the robot should turn: 0 means it should turn left 90 degrees, and 1 means it should turn right 90 degrees.
-
-"""
-import logging
 import copy
 from typing import List, Dict, NamedTuple, Tuple
 import numpy as np
@@ -11,14 +5,6 @@ import numpy as np
 import sys 
 sys.path.append('..')
 import intcode
-
-# Output logs in the console
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.INFO)
-logger.addHandler(stream_handler)
-
 
 class Point(NamedTuple):
     x: int
@@ -49,13 +35,18 @@ def right_rotation(p1: Point, p2: Point):
 if __name__ == "__main__":
     with open("input.txt", 'r') as input_file:
         sequence = input_file.read()
-        running = True
         pointer_address = 0
+
         input_code = "0"  # PART 1
         # input_code = "1"  # PART 2
+
         previous_panel = None
         panel_map = {}
         relative_base = 0
+        min_x = float("inf")
+        max_x = float("-inf")
+        min_y = float("inf")
+        max_y = float("-inf")
 
         while True:
             sequence, output, status, pointer_address, relative_base = intcode.core_intcode(sequence=sequence.split(","), 
@@ -78,8 +69,7 @@ if __name__ == "__main__":
 
                 panel_map[previous_panel.__hash__()] = previous_panel
                 continue
-            
-            # Turn left or right according to the previous segment
+            # Turn left or right and move forward one panel
             if direction == "0":
                 next_point = left_rotation(previous_panel.point, point)
             else:
@@ -91,18 +81,10 @@ if __name__ == "__main__":
                    
             panel = Panel(point, color)
             panel_map[panel.__hash__()] = panel
-
             previous_panel = copy.deepcopy(panel)
             point = copy.deepcopy(next_point)
 
-        logger.info(len(panel_map))
-        logger.debug(panel_map)
-
-        min_x = float("inf")
-        max_x = float("-inf")
-        min_y = float("inf")
-        max_y = float("-inf")
-        for _, panel in panel_map.items():
+            # Get shape of the map to render
             if panel.point.x > max_x:
                 max_x = panel.point.x
 
@@ -114,6 +96,8 @@ if __name__ == "__main__":
 
             if panel.point.y < min_y:
                 min_y = panel.point.y
+
+        print(len(panel_map)) # PART 1 answer
         
         X_range = range(min_x, max_x+1)
         Y_range = range(min_y, max_y+1) 
