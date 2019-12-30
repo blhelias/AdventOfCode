@@ -2,38 +2,68 @@ import copy
 from typing import List, Dict, NamedTuple, Tuple
 import numpy as np
 from itertools import permutations
+import math
 
-class Position:
+def floyd(serie, x0) -> Tuple[int, int]:
+    # *** SOURCE WIKIPEDIA: Tortoise and hare algorithm***
+    # Main phase of algorithm: finding a repetition x_i = x_2i.
+    # The hare moves twice as quickly as the tortoise and
+    # the distance between them increases by 1 at each step.
+    # Eventually they will both be inside the cycle and then,
+    # at some point, the distance between them will be
+    # divisible by the period λ.
+    mu = 0
+
+    tortoise_idx = x0 + 1
+    hare_idx = x0 + 2
+    # tortoise = f(x0) # f(x0) is the element/node next to x0.
+    # hare = f(f(x0))
+    while (serie[tortoise_idx] != serie[hare_idx]).all():
+        tortoise_idx += 1 
+        hare_idx += 2
+  
+    # At this point the tortoise position, ν, which is also equal
+    # to the distance between hare and tortoise, is divisible by
+    # the period λ. So hare moving in circle one step at a time, 
+    # and tortoise (reset to x0) moving towards the circle, will 
+    # intersect at the beginning of the circle. Because the 
+    # distance between them is constant at 2ν, a multiple of λ,
+    # they will agree as soon as the tortoise reaches index μ.
+
+    # Find the length of the shortest cycle starting from x_μ
+    # The hare moves one step at a time while tortoise is still.
+    # lam is incremented until λ is found.
+    lam = 1
+    hare_idx = tortoise_idx + 1
+    while (serie[tortoise_idx] != serie[hare_idx]).all():
+        hare_idx += 1
+        lam += 1
+ 
+    return lam, mu
+
+
+class Coordinates:
     def __init__(self, x, y, z):
         self.x = x
         self.y = y
         self.z = z
 
-    def pot(self):
+    def energy(self):
         return abs(self.x) + abs(self.y) + abs(self.z) 
+
+    def __eq__(self, pos):
+        return self.x==pos.x and self.y==pos.y and self.z==pos.z
 
     def __repr__(self):
         return "pos=<x={x}, y={y}, z={z}>".format(x=str(self.x), y=str(self.y), z=str(self.z))
 
-class Velocity:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-    
-    def kin(self):
-        return abs(self.x) + abs(self.y) + abs(self.z) 
-
-    def __repr__(self):
-        return "vel=<x={x}, y={y}, z={z}>".format(x=str(self.x), y=str(self.y), z=str(self.z))
-
-def parse_input(input_file) -> List[Position]:
+def parse_input(input_file) -> List[Coordinates]:
     moons_pos_str = input_file.split("\n")
     return  [parse_position(moon) for moon in moons_pos_str]
 
-def parse_position(pos_str: str) -> Position:
+def parse_position(pos_str: str) -> Coordinates:
     pos = pos_str[1:-1].split(", ")
-    return Position(int(pos[0][2:]), int(pos[1][2:]), int(pos[2][2:]))
+    return Coordinates(int(pos[0][2:]), int(pos[1][2:]), int(pos[2][2:]))
 
 def gravity(m1, m2) -> Tuple[int, int, int]:
     if m1.x == m2.x:
@@ -56,22 +86,21 @@ def gravity(m1, m2) -> Tuple[int, int, int]:
         z = 1
     else:
         z = -1
+
     return x, y, z
 
-
-def apply_velocity(pos, vel):
+def apply_velocity(pos, vel) -> Coordinates:
     """update position by applying velocity"""
     pos.x += vel.x
     pos.y += vel.y
     pos.z += vel.z
     return pos
 
-
-def apply_gravity(moons, velocity) -> Tuple[List[Position], List[Velocity]]:
+def apply_gravity(moons, velocity) -> Tuple[List[Coordinates], List[Coordinates]]:
     
-    for x in permutations(range(4), 2):
-        moon1_idx = x[0] 
-        moon2_idx = x[1] 
+    for permut in permutations(range(4), 2):
+        moon1_idx = permut[0] 
+        moon2_idx = permut[1]
         x_vel, y_vel, z_vel = gravity(moons[moon1_idx], moons[moon2_idx])
         velocity[int(moon1_idx)].x += x_vel
         velocity[int(moon1_idx)].y += y_vel
@@ -79,17 +108,60 @@ def apply_gravity(moons, velocity) -> Tuple[List[Position], List[Velocity]]:
 
     return [apply_velocity(moon, vel) for moon, vel in zip(moons, velocity)], velocity
 
-
 def compute_energy(moons, velocity) -> int:
-    """ pot is the abs sum of """
-    sum_of_tot_energy = 0
-    for moon, vel in zip(moons, velocity):
+    return sum([moon.energy() * vel.energy() for moon, vel in zip(moons, velocity)])
 
-        total = moon.pot() * vel.kin()
-        sum_of_tot_energy += total
-    
-    return sum_of_tot_energy
+def runx(moons):
+    velocity = [Coordinates(0,0,0) for _ in range(4)]
 
+    moons_initial_state = copy.deepcopy(moons)
+    init_pos = [moon.x for moon in moons_initial_state]
+    count = 0
+    while True:
+
+        moons, velocity = apply_gravity(moons, velocity)
+        count += 1
+        if [moon.x for moon in moons] == init_pos and [vel.x for vel in velocity] == [0, 0, 0, 0]:
+            break
+
+    return count
+
+def runy(moons):
+    velocity = [Coordinates(0,0,0) for _ in range(4)]
+
+    moons_initial_state= copy.deepcopy(moons)
+    init_pos = [moon.y for moon in moons_initial_state]
+    count = 0
+    while True:
+
+        moons, velocity = apply_gravity(moons, velocity)
+        count += 1
+        if [moon.y for moon in moons] == init_pos and [vel.y for vel in velocity] == [0, 0, 0, 0]:
+            break
+
+    return count
+
+def runz(moons):
+    velocity = [Coordinates(0,0,0) for _ in range(4)]
+
+    moons_initial_state = copy.deepcopy(moons)
+    init_pos = [moon.z for moon in moons_initial_state]
+    count = 0
+    while True:
+
+        moons, velocity = apply_gravity(moons, velocity)
+        count += 1
+        
+        if [moon.z for moon in moons] == init_pos and [vel.z for vel in velocity] == [0, 0, 0, 0]:
+            break
+
+    return count
+
+# def get_energy(steps, moons):
+#     moons, velocity = run(steps, moons)[-1]
+#     return compute_energy(moons,velocity)
+def lcm(a, b):
+    return abs(a*b) // math.gcd(a, b)
 
 if __name__ == "__main__":
     TEST_CASE = """<x=-1, y=0, z=2>
@@ -98,18 +170,23 @@ if __name__ == "__main__":
 <x=3, y=5, z=-1>"""
     TEST_STEP = 10
     moons_test = parse_input(TEST_CASE)
-    velocity_test = [Velocity(0,0,0) for _ in range(4)]
-    for step in range(TEST_STEP):
-        moon_test, velocity_test = apply_gravity(moons_test, velocity_test)
-    
-    e_test = compute_energy(moon_test,velocity_test)
-    
-    STEP = 1000
-    with open("input.txt", "r") as position_input:
-        moons = parse_input(position_input.read())
-        velocity = [Velocity(0,0,0) for _ in range(4)]
 
-        for step in range(STEP):
-            moons, velocity = apply_gravity(moons, velocity)
-    
-        e = compute_energy(moons,velocity)
+    TEST_CODE = """<x=-8, y=-10, z=0>
+<x=5, y=5, z=10>
+<x=2, y=-7, z=3>
+<x=9, y=-8, z=-3>"""
+
+    # moons = parse_input(TEST_CODE)
+    with open("input.txt", "r") as input_file:
+        INPUT_CODE = input_file.read()
+        moons = parse_input(INPUT_CODE)
+        x_data = copy.deepcopy(moons)
+        # print(x_data)
+        stepx = runx(x_data)
+        y_data = copy.deepcopy(moons)
+        # print(y_data)
+        stepy = runy(y_data)
+        z_data = copy.deepcopy(moons)
+        # print(z_data)
+        stepz = runz(z_data)
+        print(lcm(lcm(stepx, stepy), stepz))
