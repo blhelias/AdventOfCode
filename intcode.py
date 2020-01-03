@@ -120,7 +120,7 @@ def core_intcode(sequence: List[str],
                     input_counter += 1
                 except IndexError:
                     # It means you don't have any input left to provide
-                    # logger.debug("NoMoreInput: Amplifier set to pause")
+                    # logger.info("NoMoreInput: Amplifier set to pause")
                     return ",".join(sequence), ",".join(output), 0, pos, relative_base
             elif opcode_with_zeros[-1] == "9":
                 relative_base += instr1
