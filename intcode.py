@@ -15,9 +15,9 @@ def add_omitted_zeros(opcode: str) -> str:
 def fill_memory_with_zeros(s, memory_overflow):
     return s + ["0" for _ in range((memory_overflow + 3) - len(s))]
 
-def core_intcode(sequence: List[str], 
-                 intcode_input: List[str],  
-                 pos: int=0, 
+def core_intcode(sequence: List[str],
+                 intcode_input: List[str],
+                 pos: int=0,
                  relative_base_pos: int=0) -> Tuple[str, str, int, int, int]:
     """opcode logic:
         opcode 1 ADD
@@ -113,10 +113,10 @@ def core_intcode(sequence: List[str],
                 try:
                     if opcode_with_zeros[2] == "2":
                         sequence[int(sequence[pos+1]) + relative_base] = intcode_input[input_counter]
-                        
+
                     else:
                         sequence[int(sequence[pos+1])] = intcode_input[input_counter]
-    
+
                     input_counter += 1
                 except IndexError:
                     # It means you don't have any input left to provide
