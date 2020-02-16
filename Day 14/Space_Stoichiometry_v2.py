@@ -29,7 +29,7 @@ def least_ore(rules: List[Rule], fuel_q):
     rules_by_product = {rule.output.chemical: rule for rule in rules}
     ore_needed = 0
     rep = 0
-    
+
     requirements = {"FUEL": fuel_q}
 
     def done() -> bool:
@@ -48,7 +48,7 @@ def least_ore(rules: List[Rule], fuel_q):
                 ore_needed += amount.quantity * num_times
             else:
                 requirements[amount.chemical] = requirements.get(amount.chemical, 0) + num_times * amount.quantity
-        
+
     return ore_needed
 
 
