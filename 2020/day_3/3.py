@@ -12,12 +12,9 @@ def get_trees_n(X, s):
     p = 1 if X[x][y] == "#" else 0
     shape = (len(X), len(X[0]))
 
-    while True:
+    while x <= shape[0]-1:
         x += s[0]
         y += s[1]
-        
-        if x > shape[0]-1:
-            break
 
         if y > shape[1]-1:
             y = y - shape[1]
