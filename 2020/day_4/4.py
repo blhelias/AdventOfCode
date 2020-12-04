@@ -8,7 +8,8 @@ def read_input(elements_type=str):
         l = list(map(elements_type, f.read().split("\n\n")))
     return l
 
-def check_value(keys, values):
+def check_passport_values(keys, values):
+
     for k, v in zip(keys, values):
 
         if k == "byr":
@@ -58,9 +59,7 @@ def check_value(keys, values):
 
     return True
 
-
-
-if __name__=="__main__":
+def main():
     X = read_input(str)
     X[len(X) -1] = X[len(X) -1][:-1]
     p = 0
@@ -70,7 +69,11 @@ if __name__=="__main__":
         values = [f.split(":")[1] for f in d if f.split(":")[1]]
             
         if set(keys) == PASSPORT or set(keys) == NORTH:
-            if check_value(keys, values):
+            if check_passport_values(keys, values):
                 p += 1
 
     print(p)
+
+
+if __name__=="__main__":
+    main()
