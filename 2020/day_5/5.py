@@ -6,27 +6,26 @@ def read_input(elements_type=str):
         l = list(map(elements_type, f.read().splitlines()))
     return l
     
-def update_seat(seat, s):
+def find_seat(seat, s):
 
     if s in ["B", "F"]:
-
         if s == "B":
-            # Takes the upper half
+            # Back of the plane: Takes the upper half
             seat[0][0] = seat[0][1] - math.floor((seat[0][1] - seat[0][0]) / 2)
             return seat, seat[0][0]
         else:
-            # Takes the lower half
+            # Front of the plane: Takes the lower half
             seat[0][1] = seat[0][0] + math.floor((seat[0][1] - seat[0][0]) / 2)
             return seat, seat[0][1]
 
     elif s in ["L", "R"]:
         if s == "R":
-            # Takes the upper half
+            # Right of the plane: Takes the upper half
             seat[1][0] = seat[1][1] - math.floor((seat[1][1] - seat[1][0]) / 2)
             return seat, seat[1][0]
             
         else:
-            # Takes the lower half
+            # Left of the plane: Takes the lower half
             seat[1][1] = seat[1][0] + math.floor((seat[1][1] - seat[1][0]) / 2)
             return seat, seat[1][1]
 
@@ -35,7 +34,7 @@ def update_seat(seat, s):
 def get_boparding_pass_id(x):
     seat = [[0, 127], [0, 7]]
     for i, s in enumerate(x):
-        seat, value = update_seat(seat, s)
+        seat, value = find_seat(seat, s)
 
         if i == 6: 
             row = value
@@ -47,16 +46,14 @@ def get_boparding_pass_id(x):
 
 def main():
     X = read_input(str)
-    p1 = [get_boparding_pass_id(x) for x in X]
+    p = [get_boparding_pass_id(x) for x in X]
+    p.sort()
 
     # PART 1 
-    print(max(p1))
+    print(p[-1])
 
     # PART 2
-    p1.sort()
-    a = set(p1)
-    b = set(range(p1[0], p1[-1]))
-    print(b.difference(a))
+    print(set(range(p[0], p[-1])).difference(set(p)))
 
 if __name__=="__main__":
     main()
