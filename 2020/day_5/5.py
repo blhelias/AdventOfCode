@@ -31,7 +31,7 @@ def find_seat(seat, s):
 
     return seat
 
-def get_boparding_pass_id(x):
+def get_boarding_pass_id(x):
     seat = [[0, 127], [0, 7]]
     for i, s in enumerate(x):
         seat, value = find_seat(seat, s)
@@ -46,7 +46,7 @@ def get_boparding_pass_id(x):
 
 def main():
     X = read_input(str)
-    p = [get_boparding_pass_id(x) for x in X]
+    p = [get_boarding_pass_id(x) for x in X]
     p.sort()
 
     # PART 1 

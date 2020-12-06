@@ -1,4 +1,4 @@
-"""Day 3 advent of code"""
+"""Day 8 advent of code"""
 
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
