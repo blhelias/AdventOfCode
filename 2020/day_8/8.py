@@ -2,6 +2,7 @@
 import copy
 
 class BootCode:
+    """Short Description here"""
     def __init__(self, instructions):
         self.instructions = instructions
         self.acc = 0
@@ -72,3 +73,4 @@ if __name__=="__main__":
         bc_loop = BootCode(instructions)
         if bc_loop.run(debug=i):
             print(bc_loop.acc)
+            break
