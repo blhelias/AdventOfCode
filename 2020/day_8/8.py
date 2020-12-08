@@ -1,5 +1,4 @@
 """Day 8 advent of code"""
-import copy
 from collections import namedtuple
 from typing import NamedTuple
 
@@ -22,34 +21,22 @@ class BootCode:
         return cls(instructions)
 
     def run(self, debug=None):
-
-        infinite_loop = False
         i = 0
-
-        while not infinite_loop and i < len(self.instructions):
+        while i < len(self.instructions):
 
             if i not in self.visited:
                 self.visited.append(i)
                 inst = self.instructions[i]
 
-                if debug and i == debug:
-                    if inst.op == "jmp":
-                        inst = Instruction("nop", inst.arg)
-                    elif inst.op == "nop":
-                        inst = Instruction("jmp", inst.arg)
-
                 if inst.op == "nop":
                     i += 1
-
                 elif inst.op == "jmp":
                     i += inst.arg
-                    
                 elif inst.op == "acc":
                     self.acc += inst.arg
                     i += 1
             
             else:
-                infinite_loop = True
                 return False
 
         return True
@@ -57,7 +44,19 @@ class BootCode:
     def reset(self):
         self.acc = 0
         self.visited = []
+    
 
+def swap_nop_jmp(lines, idx):
+    clone = lines[:]
+
+    if "jmp" in clone[idx]:
+        clone[idx] = clone[idx].replace("jmp", "nop")
+    elif "nop" in clone[idx]:
+        clone[idx] = clone[idx].replace("nop", "jmp")
+    else:
+        return None
+
+    return clone
 
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
@@ -75,7 +74,10 @@ if __name__=="__main__":
 
     # Part 2
     for i in range(max(bc.visited), 0, -1):
-        bc.reset()
-        if bc.run(debug=i):
-            print(bc.acc)
-            break
+        instructions = swap_nop_jmp(X, i)
+        if instructions:
+            bc_debug = BootCode.from_string(instructions)
+            has_ended = bc_debug.run()
+            if has_ended:
+                print(bc_debug.acc)
+                break
