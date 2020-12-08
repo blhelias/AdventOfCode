@@ -13,6 +13,7 @@ class BootCode:
         self.instructions = instructions
         self.acc = 0
         self.visited = []
+        self.idx = 0
     
     @classmethod
     def from_string(cls, raws):
@@ -20,21 +21,20 @@ class BootCode:
                 for inst in raws]
         return cls(instructions)
 
-    def run(self, debug=None):
-        i = 0
-        while i < len(self.instructions):
+    def run(self):
+        while self.idx < len(self.instructions):
 
-            if i not in self.visited:
-                self.visited.append(i)
-                inst = self.instructions[i]
+            if self.idx not in self.visited:
+                self.visited.append(self.idx)
+                (op, arg) = self.instructions[self.idx]
 
-                if inst.op == "nop":
-                    i += 1
-                elif inst.op == "jmp":
-                    i += inst.arg
-                elif inst.op == "acc":
-                    self.acc += inst.arg
-                    i += 1
+                if op == "nop":
+                    self.idx += 1
+                elif op == "jmp":
+                    self.idx += arg
+                elif op == "acc":
+                    self.acc += arg
+                    self.idx += 1
             
             else:
                 return False
@@ -44,18 +44,17 @@ class BootCode:
     def reset(self):
         self.acc = 0
         self.visited = []
+        self.idx = 0
     
 
 def swap_nop_jmp(lines, idx):
     clone = lines[:]
-
     if "jmp" in clone[idx]:
         clone[idx] = clone[idx].replace("jmp", "nop")
     elif "nop" in clone[idx]:
         clone[idx] = clone[idx].replace("nop", "jmp")
     else:
         return None
-
     return clone
 
 def read_input(elements_type=str):
@@ -66,12 +65,10 @@ def read_input(elements_type=str):
 
 if __name__=="__main__":
     X = read_input(str)
-    bc = BootCode.from_string(X)
-
     # Part 1
+    bc = BootCode.from_string(X)
     bc.run()
     print(bc.acc)
-
     # Part 2
     for i in range(max(bc.visited), 0, -1):
         instructions = swap_nop_jmp(X, i)
@@ -80,4 +77,3 @@ if __name__=="__main__":
             has_ended = bc_debug.run()
             if has_ended:
                 print(bc_debug.acc)
-                break
