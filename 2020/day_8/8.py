@@ -1,12 +1,25 @@
 """Day 8 advent of code"""
 import copy
+from collections import namedtuple
+from typing import NamedTuple
+
+
+class Instruction(NamedTuple):
+    op: str
+    arg: int
+        
 
 class BootCode:
-    """Short Description here"""
     def __init__(self, instructions):
         self.instructions = instructions
         self.acc = 0
         self.visited = []
+    
+    @classmethod
+    def from_string(cls, raws):
+        instructions = [Instruction(inst.split(" ")[0], int(inst.split(" ")[1])) \
+                for inst in raws]
+        return cls(instructions)
 
     def run(self, debug=None):
 
@@ -17,23 +30,22 @@ class BootCode:
 
             if i not in self.visited:
                 self.visited.append(i)
-                operation = self.instructions[i][0]
-                arg = self.instructions[i][1]
+                inst = self.instructions[i]
 
                 if debug and i == debug:
-                    if operation == "jmp":
-                        operation = "nop"
-                    elif operation == "nop":
-                        operation = "jmp"
+                    if inst.op == "jmp":
+                        inst = Instruction("nop", inst.arg)
+                    elif inst.op == "nop":
+                        inst = Instruction("jmp", inst.arg)
 
-                if operation == "nop":
+                if inst.op == "nop":
                     i += 1
 
-                elif operation == "jmp":
-                    i += arg
+                elif inst.op == "jmp":
+                    i += inst.arg
                     
-                elif operation == "acc":
-                    self.acc += arg
+                elif inst.op == "acc":
+                    self.acc += inst.arg
                     i += 1
             
             else:
@@ -42,15 +54,9 @@ class BootCode:
 
         return True
 
-
-def parse_instructions(instructions):
-    lines = []
-    for inst in instructions:
-        operation = inst.split(" ")[0]
-        arg = int(inst.split(" ")[1])
-        lines.append((operation, arg))
-
-    return lines
+    def reset(self):
+        self.acc = 0
+        self.visited = []
 
 
 def read_input(elements_type=str):
@@ -61,16 +67,15 @@ def read_input(elements_type=str):
 
 if __name__=="__main__":
     X = read_input(str)
-    instructions = parse_instructions(X)
+    bc = BootCode.from_string(X)
 
     # Part 1
-    bc1 = BootCode(instructions)
-    bc1.run()
-    print(bc1.acc)
+    bc.run()
+    print(bc.acc)
 
     # Part 2
-    for i in range(max(bc1.visited), 0, -1):
-        bc_loop = BootCode(instructions)
-        if bc_loop.run(debug=i):
-            print(bc_loop.acc)
+    for i in range(max(bc.visited), 0, -1):
+        bc.reset()
+        if bc.run(debug=i):
+            print(bc.acc)
             break
