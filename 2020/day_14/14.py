@@ -7,4 +7,4 @@ def read_input(elements_type=str):
 
 if __name__=="__main__":
     X = read_input(str)
-    # CODE HERE
+    print(X)
