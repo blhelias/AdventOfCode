@@ -10,8 +10,8 @@ LLLLLLLLLL
 L.LLLLLL.L
 L.LLLLL.LL"""
 
-delta_x = [[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]]
-delta_y = [[-1, -1, -1], [0, 0, 0], [1, 1, 1]]
+delta_x = [[-1, 0, 1], [-1, 1], [-1, 0, 1]]
+delta_y = [[-1, -1, -1], [0, 0], [1, 1, 1]]
 
 
 def read_input(elements_type=str):
@@ -22,15 +22,12 @@ def read_input(elements_type=str):
 def scan_adjacent(grid, i, j):
     """This function scans all adjacents seats around a given seat"""
     counter = {"#": 0, "L": 0, ".": 0}
-    for y in range(-1, 2):
-        for z in range(-1, 2):
-
-            if (y != 0 or z != 0) and (i+y>=0 and j+z>=0):
-                try:
-                    counter[grid[i+y][j+z]] += 1
-                except:
-                    # indexError
-                    pass
+    for lx, ly in zip(delta_x, delta_y):
+        for dx, dy in zip(lx, ly):
+            x = i + dx
+            y = j + dy
+            if 0 <= x < len(grid) and 0 <= y < len(grid[0]):
+                counter[grid[x][y]] += 1
 
     return counter["#"], counter["L"]
 
@@ -53,7 +50,7 @@ def draw_seat_map1(grid):
 
     return new_grid, stabilized
 
-def scan_directions(grid, i, j):
+def scan_first(grid, i, j):
     """This function scans all adjacents seats around a given seat"""
     counter = {"#": 0, "L": 0}
 
@@ -63,22 +60,15 @@ def scan_directions(grid, i, j):
             y = j
             found_seat = False
             while not found_seat:
-                # print(x+dx, y+dy)
-                if (dx != 0 or dy != 0) and (x+dx>=0 and y+dy>=0):
+                x += dx
+                y += dy
+                if 0 <= x < len(grid) and 0 <= y < len(grid[0]):
                     occupied = False
-                    x += dx
-                    y += dy
-                    # print(x, y)
-                    try:
-                        if grid[x][y] == "L":
-                            counter[grid[x][y]] += 1
-                            found_seat = True
-                        elif grid[x][y] == "#":
-                            counter[grid[x][y]] += 1
-                            found_seat = True
-                        else:
-                            continue
-                    except:
+                    if grid[x][y] == "L":
+                        counter[grid[x][y]] += 1
+                        found_seat = True
+                    elif grid[x][y] == "#":
+                        counter[grid[x][y]] += 1
                         found_seat = True
                 else:
                     found_seat = True
@@ -93,8 +83,7 @@ def draw_seat_map2(grid):
 
     for i in range(h):
         for j in range(w):
-            occ, emp = scan_directions(grid, i, j)
-            # print(grid[i][j], occ, emp)
+            occ, emp = scan_first(grid, i, j)
             if grid[i][j] == "L" and occ == 0:
                 new_grid[i][j] = "#"
                 stabilized = False
@@ -129,4 +118,3 @@ if __name__=="__main__":
         X, stabilized = draw_seat_map2(X)
 
     print(count_occ(X))
-    
