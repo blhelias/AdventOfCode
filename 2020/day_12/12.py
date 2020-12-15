@@ -5,13 +5,6 @@ from collections import namedtuple
 from typing import NamedTuple
 from math import sin, cos, radians, pi, atan2, degrees
 
-RAWS = """F10
-N3
-F7
-R90
-F11
-L180"""
-
 class Instruction(NamedTuple):
     action: str
     value: int
@@ -26,13 +19,10 @@ def read_input(elements_type=str):
     return l
 
 def rotate(point, angle):
-
-    ox, oy = (0, 0)
     px, py = point
-
-    qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
-    qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
-    return [round(qx, 0), round(qy, 0)]
+    qx = math.cos(angle) * px - math.sin(angle) * py
+    qy = math.sin(angle) * px + math.cos(angle) * py
+    return [int(round(qx, 0)), int(round(qy, 0))]
 
 def move_ship_wp1(x, y, wp, instruction):
     action, value = instruction
@@ -53,7 +43,6 @@ def move_ship_wp1(x, y, wp, instruction):
 def solve1(X, way_point):
     x = 0
     y = 0
-    
     for instruction in X:
         x, y, way_point = move_ship_wp1(x, y, way_point, instruction)
     return x, y
@@ -85,9 +74,23 @@ def solve2(X, way_point):
 
 
 if __name__=="__main__":
+    #
+    # TESTS
+    #
+
+    RAWS = """F10
+    N3
+    F7
+    R90
+    F11
+    L180"""
     X = read_input(str)
     # X = list(map(str, RAWS.splitlines()))
     X = [Instruction.from_string(x) for x in X]
+    
+    #
+    # RESULTS
+    #
 
     # PART 1
     wp1 = [+1, 0]
