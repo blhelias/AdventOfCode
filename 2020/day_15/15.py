@@ -15,25 +15,24 @@ def read_input(elements_type=str):
 
 if __name__=="__main__":
     X = read_input(str)
-    # X = list(map(int, RAW3.strip().split(",")))
+    # X = list(map(int, RAW.strip().split(",")))
+    TURN1 = 2020
+    TURN2 = 30000000
     print(X)
     memo = {}
     i = 1
     rep = None
-    while i <= 30000000:
+    while i <= TURN2:
         last_nu = rep
         if i-1 < len(X):
             # Starting Number
             rep = X[i-1]
             memo[rep] = [i]
         else:
-            if i-1 == len(X):
+            if len(memo[last_nu]) < 2:
                 rep = 0
             else:
-                if len(memo[last_nu]) < 2:
-                    rep = 0
-                else:
-                    rep = memo[last_nu][-1] - memo[last_nu][-2]
+                rep = memo[last_nu][-1] - memo[last_nu][-2]
             
             if rep not in memo:
                 memo[rep] = [i]
@@ -41,8 +40,6 @@ if __name__=="__main__":
                 memo[rep].append(i)
 
         i += 1
-
         # print(f"Turn {i-1} : {rep} (last Nu = {last_nu}) | {memo}")
-    print(rep)
-        
 
+    print(rep)
