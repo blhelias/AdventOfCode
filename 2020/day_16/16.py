@@ -26,8 +26,8 @@ class Rule(NamedTuple):
 
 class Note(NamedTuple):
     rules: List[Rule]
-    ticket: List[str]
-    nearby_ticket: List[str]
+    ticket: List[int]
+    nearby_ticket: List[List[int]]
 
 def parse(s):
     rule, t, nearby_t = [], [], []
@@ -45,48 +45,49 @@ def parse(s):
                     t.append(line)
                 else:
                     nearby_t.append(line)
-
-    return Note(rule, t, nearby_t)
+    return Note(
+        rule, 
+        list(map(int, t[0].split(","))), 
+        [list(map(int, nt.split(","))) for nt in nearby_t]
+    )
 
 def get_invalid_tickets(rules, fields):
-    fields = list(map(int, fields.split(",")))
-    rep1 = []
+    M = []
     for f in fields:
-        rep2 = []
+        m = []
         for r1, r2 in rules:
             if r1[0]<=f<=r1[1] or r2[0]<=f<=r2[1]:
-                rep2.append(True)
+                m.append(True)
             else:
-                rep2.append(False)
+                m.append(False)
 
-        rep1.append(rep2)
+        M.append(m)
 
-    i_fields = [any(x) for x in rep1]
+    i_fields = [any(x) for x in M]
 
     for i in range(len(i_fields)):
         if not i_fields[i]:
             return fields[i]
     
-    return None
+    return 0
 
 def get_valid_tickets(rules, fields):
-    fields = list(map(int, fields.split(",")))
-    rep1 = []
+    M = []
     for f in fields:
-        rep2 = []
+        m = []
         for r1, r2 in rules:
             if r1[0]<=f<=r1[1] or r2[0]<=f<=r2[1]:
-                rep2.append(True)
+                m.append(True)
             else:
-                rep2.append(False)
+                m.append(False)
 
-        rep1.append(rep2)
-    i_fields = [any(x) for x in rep1]
+        M.append(m)
+    i_fields = [any(x) for x in M]
     for i in range(len(i_fields)):
         if not i_fields[i]:
             return None
     
-    return rep1
+    return M
 
 def find_min(G):
     result_key = None
@@ -104,81 +105,46 @@ def find_min(G):
 
 
 if __name__=="__main__":
-    RAW = """class: 1-3 or 5-7
-row: 6-11 or 33-44
-seat: 13-40 or 45-50
-
-your ticket:
-7,1,14
-
-nearby tickets:
-7,3,47
-40,4,50
-55,2,20
-38,6,12"""
-
-    RAW1 = """class: 0-1 or 4-19
-row: 0-5 or 8-19
-seat: 0-13 or 16-19
-
-your ticket:
-11,12,13
-
-nearby tickets:
-3,9,18
-15,1,5
-5,14,9"""
-
     with open("input.txt", "r") as f:
         X = f.read()
 
     rules, ticket, nearby_ticket = parse(X)
-    rep = 0
-    for nt in nearby_ticket:
-        w = get_invalid_tickets(rules, nt)
-        if w:
-            rep += w
-    print(rep)
-    print(rules)
+    #
+    # PART 1
+    # 
+    p1 = sum(get_invalid_tickets(rules, nt) for nt in nearby_ticket)
+    print(p1)
+
     #
     # PART 2
     # 
-    consolidate = nearby_ticket + ticket
-    rep = {a: set() for a in range(len(ticket[0].split(",")))}
+    consolidate = nearby_ticket
+    rep = {a: set() for a in range(len(ticket))}
 
-    for t in range(len(consolidate)):
-        v = get_valid_tickets(rules, consolidate[t])
-        if v:
-            for i, number in enumerate(v):
-                for j, boo_rule in enumerate(number):
-                    if not boo_rule:
+    for row in range(len(consolidate)):
+        valid = get_valid_tickets(rules, consolidate[row])
+        if valid:
+            for i, number in enumerate(valid):
+                for j, boolean_rule in enumerate(number):
+                    if not boolean_rule:
                         rep[i].add(j)
 
     possible_entries = {
-        a: set() for a in range(len(ticket[0].split(",")))
+        a: set() for a in range(len(ticket))
     }
 
-    filter_set = set()
-    for i in range(len(ticket[0].split(","))):
-        filter_set.add(i)
+    filter_set = set([i for i in range(len(ticket))])
 
     for k, v in rep.items():
         possible_entries[k].update(filter_set.difference(v))
 
-    # print(possible_entries)
-
     final_dict = {}
-    while len(final_dict) < len(ticket[0].split(",")):
+    while len(final_dict) < len(ticket):
         possible_entries, rep =  find_min(possible_entries)
-        if rep:
-            final_dict[rep[0]] = rep[1]
-        print(final_dict)
-        # print(possible_entries)
-    print(possible_entries)
+        final_dict[rep[0]] = rep[1]
 
     ans = 1
-    ticket = list(map(int, ticket[0].split(",")))
-    print(ticket)
+    ticket = list(map(int, ticket))
     for y, z in final_dict.items():
         if z in range(6):
             ans *= ticket[y]
