@@ -16,10 +16,8 @@ class GameOfLife:
                 result.append(x)
             else:
                 result.append(empty_g)
-        self.grid = result
 
-        print(self.grid)
-        return result
+        self.grid = result
     
     def run(self, cycle):
         for c in range(cycle):
@@ -71,6 +69,7 @@ class GameOfLife:
                 for cube in rows:
                     if cube == "#":
                         actives += 1
+
         return actives 
 
     def __repr__(self):
@@ -83,7 +82,6 @@ class GameOfLife:
 
         return repr_val
                 
-
 
 if __name__=="__main__":
     RAW = """...............
