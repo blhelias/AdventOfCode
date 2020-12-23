@@ -118,11 +118,10 @@ if __name__=="__main__":
     #
     # PART 2
     # 
-    consolidate = nearby_ticket
     rep = {a: set() for a in range(len(ticket))}
 
-    for row in range(len(consolidate)):
-        valid = get_valid_tickets(rules, consolidate[row])
+    for row in range(len(nearby_ticket)):
+        valid = get_valid_tickets(rules, nearby_ticket[row])
         if valid:
             for i, number in enumerate(valid):
                 for j, boolean_rule in enumerate(number):
