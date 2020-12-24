@@ -85,11 +85,11 @@ class GameOfLife:
 
     def get_count_active(self):
         actives  = 0
-        for w in self.grid:
-            for g in w:
-                for rows in g:
-                    for cube in rows:
-                        if cube == "#":
+        for w in range(self.shape[3]):
+            for z in range(self.shape[2]):
+                for x in range(self.shape[0]):
+                    for y in range(self.shape[1]):
+                        if self.grid[w][z][x][y] == "#":
                             actives += 1
 
         return actives 
