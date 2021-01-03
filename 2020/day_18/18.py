@@ -1,63 +1,67 @@
-"""Day 18 advent of code"""
-
+"""
+Day 18 advent of code
+Code provenant de programmation efficace
+Christoph Durr Jill Jênn Vie
+"""
 
 def parse_input(s):
     x = s.split("\n")
     return x
 
-def parse(expr):
-    def _helper(iter):
-        items = []
-        for item in iter:
-            if item == '(':
-                result, closeparen = _helper(iter)
-                if not closeparen:
-                    raise ValueError("bad expression -- unbalanced parentheses")
-                items.append(result)
-            elif item == ')':
-                return items, True
+
+def expr_eval(cell, expr):
+
+    if isinstance(expr, tuple):
+        (left, op, right) = expr
+        l = expr_eval(cell, left)
+        r = expr_eval(cell, right)
+
+        if op == "+":
+            return l + r
+
+        if op == "*":
+            return l * r
+
+    elif isinstance(expr, int):
+        return expr
+
+    else:
+        cell[exp] = expr_eval(cell, cell[expr])
+        return cell[expr]
+
+def expr_parse(line, priority):
+    # on procède avec 2 piles, une pour les opérateurs une pour les valeurs.
+    vals = []
+    ops = []
+    for tok in line + [";"]:
+
+        if tok in priority: # ça veut dire que tok est un opérateur
+
+            while tok != "(" and ops and priority[ops[-1]] >= priority[tok]:
+                right = vals.pop()
+                left = vals.pop()
+                vals.append((left, ops.pop(), right))
+
+            if tok == ")":
+                ops.pop()
             else:
-                items.append(item)
-        return items, False
+                ops.append(tok)
 
-    return _helper(iter(expr))[0]
+        elif tok.isdigit():
+             vals.append(int(tok))
+        else:
+            vals.append(tok)
+    
+    return vals.pop()
 
+def run(raw, priority):
+    p1 = expr_parse(list(raw.replace(" ", "")), priority)
+    return expr_eval({}, p1)    
 
-def compute(expr):
-    ans = 0
-    for i in range(len(expr)):
-
-        if expr[i] in ["+", "*"]:
-            left = expr[i-1]
-            right = expr[i+1]
-
-            if isinstance(left, list):
-                left = compute(left)
-            if isinstance(right, list):
-                right = compute(right)
-
-            left = int(left)
-            right = int(right)
-            if expr[i] == "+":
-                if ans == 0:
-                    ans = left + right
-                else:
-                    ans += right
-            elif expr[i] == "*":
-                if ans == 0:
-                    ans = left * right
-                else:
-                    ans *= right
-
-    return ans
-
-def evaluate(line):
-    x = parse_input(line)
-    p = parse(x[0].replace(" ",""))
-    res = compute(p)
-    return res
 
 if __name__=="__main__":
+    PRIORITY1 = {";": 0, "(": 1, ")": 2, "+": 3, "*": 3}  
+    PRIORITY2 = {";": 0, "(": 1, ")": 2, "+": 4, "*": 3}  
     #
     # TESTS
     #
@@ -65,11 +69,16 @@ if __name__=="__main__":
     RAW2 = "5 + (8 * 3 + 9 + 3 * 4 * 3)"
     RAW3 = "5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"
     RAW4 = "((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"
-
-    assert evaluate(RAW1) == 26
-    assert evaluate(RAW2) == 437
-    assert evaluate(RAW3) == 12240
-    assert evaluate(RAW4) == 13632
+    # PART1
+    assert run(RAW1, PRIORITY1) == 26
+    assert run(RAW2, PRIORITY1) == 437
+    assert run(RAW3, PRIORITY1) == 12240
+    assert run(RAW4, PRIORITY1) == 13632
+    # PART2
+    assert run(RAW1, PRIORITY2) == 46
+    assert run(RAW2, PRIORITY2) == 1445
+    assert run(RAW3, PRIORITY2) == 669060
+    assert run(RAW4, PRIORITY2) == 23340
 
     #
     # PUZZLE
@@ -78,4 +87,5 @@ if __name__=="__main__":
         X = f.read()
 
     lines = parse_input(X)
-    print(sum(evaluate(line) for line in lines))
+    print(sum(run(line, PRIORITY1) for line in lines if line))
+    print(sum(run(line, PRIORITY2) for line in lines if line))
