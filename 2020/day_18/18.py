@@ -9,12 +9,11 @@ def parse_input(s):
     return x
 
 
-def expr_eval(cell, expr):
-
+def expr_eval(expr):
     if isinstance(expr, tuple):
         (left, op, right) = expr
-        l = expr_eval(cell, left)
-        r = expr_eval(cell, right)
+        l = expr_eval(left)
+        r = expr_eval(right)
 
         if op == "+":
             return l + r
@@ -25,9 +24,6 @@ def expr_eval(cell, expr):
     elif isinstance(expr, int):
         return expr
 
-    else:
-        cell[exp] = expr_eval(cell, cell[expr])
-        return cell[expr]
 
 def expr_parse(line, priority):
     # on procède avec 2 piles, une pour les opérateurs une pour les valeurs.
@@ -55,8 +51,8 @@ def expr_parse(line, priority):
     return vals.pop()
 
 def run(raw, priority):
-    p1 = expr_parse(list(raw.replace(" ", "")), priority)
-    return expr_eval({}, p1)    
+    p = expr_parse(list(raw.replace(" ", "")), priority)
+    return expr_eval(p)    
 
 
 if __name__=="__main__":
