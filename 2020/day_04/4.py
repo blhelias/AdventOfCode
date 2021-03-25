@@ -3,10 +3,12 @@
 PASSPORT = set(["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid", "cid"])
 NORTH = set(["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"])
 
+
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(elements_type, f.read().split("\n\n")))
     return l
+
 
 def check_passport_values(keys, values):
 
@@ -18,7 +20,7 @@ def check_passport_values(keys, values):
             v = int(v)
             if v < 1920 or v > 2002:
                 return False
-            
+
         elif k == "iyr":
             if len(v) != 4 or not v.isnumeric():
                 return False
@@ -44,7 +46,7 @@ def check_passport_values(keys, values):
                 h = int(v.split("in")[0])
                 if h < 59 or h > 76:
                     return False
-                
+
         elif k == "hcl":
             if len(v) != 7 or v[0] != "#" or "#" in v[1:]:
                 return False
@@ -59,15 +61,16 @@ def check_passport_values(keys, values):
 
     return True
 
+
 def main():
     X = read_input(str)
-    X[len(X) -1] = X[len(X) -1][:-1]
+    X[len(X) - 1] = X[len(X) - 1][:-1]
     p = 0
     for x in X:
-        d = x.replace('\n', ' ').split(" ")
+        d = x.replace("\n", " ").split(" ")
         keys = [f.split(":")[0] for f in d if f.split(":")[0]]
         values = [f.split(":")[1] for f in d if f.split(":")[1]]
-            
+
         if set(keys) == PASSPORT or set(keys) == NORTH:
             if check_passport_values(keys, values):
                 p += 1
@@ -75,5 +78,5 @@ def main():
     print(p)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()

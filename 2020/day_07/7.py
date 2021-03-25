@@ -18,6 +18,7 @@ dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags."""
 
+
 def read_input(test_string=None, elements_type=str):
     if test_string:
         return list(map(elements_type, test_string.splitlines()))
@@ -37,8 +38,10 @@ def build_graph(rules):
 
     return g
 
+
 def transpose(rules):
     return [(r[1], r[0], r[2]) for r in rules]
+
 
 def search1(g, start):
     q = g[start]
@@ -57,7 +60,7 @@ def search1(g, start):
 
 
 def dfs(graph, node):
-    
+
     if node[0] not in graph:
         return 1
 
@@ -68,10 +71,10 @@ def dfs(graph, node):
     if node[0] == "shiny gold":
         return total
 
-    return total + 1  
-            
+    return total + 1
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     # rules = read_input(test_string=INPUT_SAMPLE_1, elements_type=str)
     # rules = read_input(test_string=INPUT_SAMPLE_2, elements_type=str)
     rules = read_input(elements_type=str)
@@ -85,9 +88,9 @@ if __name__=="__main__":
             if b != "no other bags.":
                 b = b.split(" bag")[0]
                 quantity = b.split(" ")[0]
-                child = b.split(quantity + " ")[1] 
+                child = b.split(quantity + " ")[1]
                 X.append((parent, child, int(quantity)))
-                
+
     G1 = build_graph(transpose(X))
     start = "shiny gold"
     # PART 1

@@ -4,13 +4,14 @@ from typing import Dict, List
 
 class Planet:
     """A planet is an object that can have direct
-        or indirect orbit"""
+    or indirect orbit"""
+
     def __init__(self, name):
         self.name = name
-        self.orbit = None # only one planet possible !
-    
+        self.orbit = None  # only one planet possible !
+
     def search(self):
-        counter  = 0
+        counter = 0
         transfers = [self]
 
         if self.name == "COM":
@@ -25,7 +26,7 @@ class Planet:
             else:
                 p = p.orbit.planet
 
-            transfers.append(p) 
+            transfers.append(p)
 
         return counter, transfers
 
@@ -36,11 +37,14 @@ class Planet:
         return self.name == other.name
 
     def __repr__(self):
-        return "{name} orbits around {orbit} ! ".format(orbit=self.orbit, name=self.name)
+        return "{name} orbits around {orbit} ! ".format(
+            orbit=self.orbit, name=self.name
+        )
 
 
 class Orbit:
     """an orbit is a set of 2 planet"""
+
     def __init__(self, planet: Planet) -> None:
         self.planet = planet
 
@@ -50,9 +54,10 @@ class Orbit:
 
 class Map:
     """a map is a set of direct orbit between 2 planets"""
+
     def __init__(self):
         self.orbit_map = {}
-    
+
     def get_planet(self, planet_name: str):
         # assert planet exists otherwise add it to the map
         if planet_name not in self.orbit_map:
@@ -67,11 +72,11 @@ class Map:
         v = self.get_planet(planet.name)
         w = self.get_planet(etoile.name)
         v.orbit = Orbit(w)
-    
+
     def build(self, path: str) -> None:
-        with open(path) as orbit_graph_file: # disable pylint
+        with open(path) as orbit_graph_file:  # disable pylint
             orbit_graph_io = orbit_graph_file.read()
-            orbit_graph = orbit_graph_io.split('\n')
+            orbit_graph = orbit_graph_io.split("\n")
             orbit_graph = [line.split(")") for line in orbit_graph]
 
         for planet_duo in orbit_graph:
@@ -81,7 +86,7 @@ class Map:
 
 
 def remove_intersection(list1, list2):
-    return list(set(transfer1)^set(transfer2))
+    return list(set(transfer1) ^ set(transfer2))
 
 
 if __name__ == "__main__":
@@ -92,10 +97,10 @@ if __name__ == "__main__":
     transfers_list = []
     for planet_name, planet_value in orbit_graph.orbit_map.items():
         if planet_name == "YOU" or planet_name == "SAN":
-            total_orbit, transfers = planet_value.search() # specifice a part 2
+            total_orbit, transfers = planet_value.search()  # specifice a part 2
             transfers_list.append(transfers)
         # reponse += planet_value.search()  # Part 1
-    # print(response) 
+    # print(response)
 
     transfer1 = transfers_list[0]
     transfer2 = transfers_list[1]

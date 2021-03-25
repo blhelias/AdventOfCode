@@ -29,8 +29,10 @@ import copy
 # # INPUT = "1"
 # INPUT = "5"
 
+
 def add_omitted_zeros(opcode: str) -> str:
-    return '{:>05}'.format(opcode)
+    return "{:>05}".format(opcode)
+
 
 def test_diagnostic(sequence, intcode_input):
     instruction_pt = 0
@@ -38,7 +40,7 @@ def test_diagnostic(sequence, intcode_input):
     OUTPUT = []
 
     while running:
- 
+
         opcode = sequence[instruction_pt]
         opcode_with_zeros = add_omitted_zeros(opcode)
 
@@ -47,67 +49,67 @@ def test_diagnostic(sequence, intcode_input):
             continue
 
         if opcode_with_zeros[2] == "0":
-            instr1 = int(sequence[int(sequence[instruction_pt+1])])
+            instr1 = int(sequence[int(sequence[instruction_pt + 1])])
         else:
-            instr1 = int(sequence[instruction_pt+1])
+            instr1 = int(sequence[instruction_pt + 1])
 
-        if (opcode_with_zeros[1] == "0" and opcode_with_zeros[-1] != "4"):
-            instr2 = int(sequence[int(sequence[instruction_pt+2])])
+        if opcode_with_zeros[1] == "0" and opcode_with_zeros[-1] != "4":
+            instr2 = int(sequence[int(sequence[instruction_pt + 2])])
         else:
-            instr2 = int(sequence[instruction_pt+2])
+            instr2 = int(sequence[instruction_pt + 2])
 
         if opcode_with_zeros[-1] == "3" or opcode_with_zeros[-1] == "4":
             # read parameters and apply instructions
             if opcode_with_zeros[-1] == "4":
                 OUTPUT.append(str(instr1))
-            
+
             if opcode_with_zeros[-1] == "3":
-                sequence[int(sequence[instruction_pt+1])] = intcode_input
-            
+                sequence[int(sequence[instruction_pt + 1])] = intcode_input
+
             increment = 2
 
         elif opcode_with_zeros[-1] == "5" or opcode_with_zeros[-1] == "6":
             # read parameters and apply instructions
             if opcode_with_zeros[-1] == "5":
                 if str(instr1) != "0":
-                    instruction_pt = instr2 # jump
+                    instruction_pt = instr2  # jump
                     increment = 0
                 else:
                     increment = 3
 
             elif opcode_with_zeros[-1] == "6":
                 if str(instr1) == "0":
-                    instruction_pt = instr2 # jump
+                    instruction_pt = instr2  # jump
                     increment = 0
                 else:
                     increment = 3
             else:
                 increment = 3
-            
+
         else:
 
             if opcode_with_zeros[-1] == "1":
-                sequence[int(sequence[instruction_pt+3])] = str(instr1 + instr2)
-            
+                sequence[int(sequence[instruction_pt + 3])] = str(instr1 + instr2)
+
             elif opcode_with_zeros[-1] == "2":
-                sequence[int(sequence[instruction_pt+3])] = str(instr1 * instr2)
-            
+                sequence[int(sequence[instruction_pt + 3])] = str(instr1 * instr2)
+
             elif opcode_with_zeros[-1] == "7":
                 if instr1 < instr2:
-                    sequence[int(sequence[instruction_pt+3])] = "1"
+                    sequence[int(sequence[instruction_pt + 3])] = "1"
                 else:
-                    sequence[int(sequence[instruction_pt+3])] = "0"
+                    sequence[int(sequence[instruction_pt + 3])] = "0"
 
             elif opcode_with_zeros[-1] == "8":
                 if instr1 == instr2:
-                    sequence[int(sequence[instruction_pt+3])] = "1"
+                    sequence[int(sequence[instruction_pt + 3])] = "1"
                 else:
-                    sequence[int(sequence[instruction_pt+3])] = "0"
+                    sequence[int(sequence[instruction_pt + 3])] = "0"
 
             increment = 4
-        
+
         instruction_pt += increment
-   
+
     return ",".join(sequence), ",".join(OUTPUT)
 
 
@@ -117,7 +119,7 @@ if __name__ == "__main__":
     with open("input.txt", "r") as input_file:
         program = input_file.readline()
         program_sequence = program.split(",")
-        
+
         sequence, diagnostic = test_diagnostic(program_sequence, INPUT)
 
         print(diagnostic)

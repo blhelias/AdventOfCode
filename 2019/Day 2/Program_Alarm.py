@@ -1,14 +1,21 @@
 import os
 import copy
 
+
 def programm_alarm(sequence):
     for index in range(0, len(sequence), 4):
         if sequence[index] == "99":
             break
         if sequence[index] == "1":
-            sequence[int(sequence[index+3])] = str(int(sequence[int(sequence[index+1])]) + int(sequence[int(sequence[index+2])]))
+            sequence[int(sequence[index + 3])] = str(
+                int(sequence[int(sequence[index + 1])])
+                + int(sequence[int(sequence[index + 2])])
+            )
         elif sequence[index] == "2":
-            sequence[int(sequence[index+3])] = str(int(sequence[int(sequence[index+1])]) * int(sequence[int(sequence[index+2])]))
+            sequence[int(sequence[index + 3])] = str(
+                int(sequence[int(sequence[index + 1])])
+                * int(sequence[int(sequence[index + 2])])
+            )
         else:
             print("error")
     return ",".join(sequence)

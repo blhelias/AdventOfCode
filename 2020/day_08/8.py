@@ -6,7 +6,7 @@ from typing import NamedTuple
 class Instruction(NamedTuple):
     op: str
     arg: int
-        
+
 
 class BootCode:
     def __init__(self, instructions):
@@ -14,11 +14,12 @@ class BootCode:
         self.acc = 0
         self.visited = []
         self.idx = 0
-    
+
     @classmethod
     def from_string(cls, raws):
-        instructions = [Instruction(inst.split(" ")[0], int(inst.split(" ")[1])) \
-                for inst in raws]
+        instructions = [
+            Instruction(inst.split(" ")[0], int(inst.split(" ")[1])) for inst in raws
+        ]
         return cls(instructions)
 
     def run(self):
@@ -35,7 +36,7 @@ class BootCode:
                 elif op == "acc":
                     self.acc += arg
                     self.idx += 1
-            
+
             else:
                 return False
 
@@ -45,7 +46,7 @@ class BootCode:
         self.acc = 0
         self.visited = []
         self.idx = 0
-    
+
 
 def swap_nop_jmp(lines, idx):
     clone = lines[:]
@@ -57,13 +58,14 @@ def swap_nop_jmp(lines, idx):
         return None
     return clone
 
+
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(elements_type, f.read().splitlines()))
     return l
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     X = read_input(str)
     # Part 1
     bc = BootCode.from_string(X)
