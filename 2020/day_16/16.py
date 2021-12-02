@@ -3,7 +3,7 @@
 from typing import NamedTuple, List
 from collections import namedtuple
 
-# 
+#
 # DATACLASS
 #
 class Rule(NamedTuple):
@@ -18,16 +18,18 @@ class Rule(NamedTuple):
         left = r.split("or ")[0]
         right = r.split("or ")[1]
         rule = Rule(
-            # name, 
-            [int(left.split("-")[0]),  int(left.split("-")[1])],
-            [int(right.split("-")[0]),  int(right.split("-")[1])]
+            # name,
+            [int(left.split("-")[0]), int(left.split("-")[1])],
+            [int(right.split("-")[0]), int(right.split("-")[1])],
         )
         return rule
+
 
 class Note(NamedTuple):
     rules: List[Rule]
     ticket: List[int]
     nearby_ticket: List[List[int]]
+
 
 def parse(s):
     rule, t, nearby_t = [], [], []
@@ -46,17 +48,18 @@ def parse(s):
                 else:
                     nearby_t.append(line)
     return Note(
-        rule, 
-        list(map(int, t[0].split(","))), 
-        [list(map(int, nt.split(","))) for nt in nearby_t]
+        rule,
+        list(map(int, t[0].split(","))),
+        [list(map(int, nt.split(","))) for nt in nearby_t],
     )
+
 
 def get_invalid_tickets(rules, fields):
     M = []
     for f in fields:
         m = []
         for r1, r2 in rules:
-            if r1[0]<=f<=r1[1] or r2[0]<=f<=r2[1]:
+            if r1[0] <= f <= r1[1] or r2[0] <= f <= r2[1]:
                 m.append(True)
             else:
                 m.append(False)
@@ -68,15 +71,16 @@ def get_invalid_tickets(rules, fields):
     for i in range(len(i_fields)):
         if not i_fields[i]:
             return fields[i]
-    
+
     return 0
+
 
 def get_valid_tickets(rules, fields):
     M = []
     for f in fields:
         m = []
         for r1, r2 in rules:
-            if r1[0]<=f<=r1[1] or r2[0]<=f<=r2[1]:
+            if r1[0] <= f <= r1[1] or r2[0] <= f <= r2[1]:
                 m.append(True)
             else:
                 m.append(False)
@@ -86,8 +90,9 @@ def get_valid_tickets(rules, fields):
     for i in range(len(i_fields)):
         if not i_fields[i]:
             return None
-    
+
     return M
+
 
 def find_min(G):
     result_key = None
@@ -99,25 +104,25 @@ def find_min(G):
     for _, v2 in G.items():
         if val in v2:
             v2.remove(val)
-        
+
     del G[result_key]
     return G, (result_key, val)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     with open("input.txt", "r") as f:
         X = f.read()
 
     rules, ticket, nearby_ticket = parse(X)
     #
     # PART 1
-    # 
+    #
     p1 = sum(get_invalid_tickets(rules, nt) for nt in nearby_ticket)
     print(p1)
 
     #
     # PART 2
-    # 
+    #
     rep = {a: set() for a in range(len(ticket))}
 
     for row in range(len(nearby_ticket)):
@@ -128,9 +133,7 @@ if __name__=="__main__":
                     if not boolean_rule:
                         rep[i].add(j)
 
-    possible_entries = {
-        a: set() for a in range(len(ticket))
-    }
+    possible_entries = {a: set() for a in range(len(ticket))}
 
     filter_set = set([i for i in range(len(ticket))])
 
@@ -139,7 +142,7 @@ if __name__=="__main__":
 
     final_dict = {}
     while len(final_dict) < len(ticket):
-        possible_entries, rep =  find_min(possible_entries)
+        possible_entries, rep = find_min(possible_entries)
         final_dict[rep[0]] = rep[1]
 
     ans = 1

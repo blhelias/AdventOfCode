@@ -8,12 +8,14 @@ RAW4 = """2,3,1"""
 RAW5 = """3,2,1"""
 RAW6 = """3,1,2"""
 
+
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(int, f.read().strip().split(",")))
     return l
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     X = read_input(str)
     # X = list(map(int, RAW.strip().split(",")))
     TURN1 = 2020
@@ -24,16 +26,16 @@ if __name__=="__main__":
     rep = None
     while i <= TURN2:
         last_nu = rep
-        if i-1 < len(X):
+        if i - 1 < len(X):
             # Starting Number
-            rep = X[i-1]
+            rep = X[i - 1]
             memo[rep] = [i]
         else:
             if len(memo[last_nu]) < 2:
                 rep = 0
             else:
                 rep = memo[last_nu][-1] - memo[last_nu][-2]
-            
+
             if rep not in memo:
                 memo[rep] = [i]
             else:

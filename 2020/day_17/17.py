@@ -5,7 +5,7 @@ class GameOfLife:
     def __init__(self, grid=None, rounds=6, shape=(5, 5, 5)):
         self.grid = grid
         self.rounds = rounds
-        self.shape = tuple(x if x%2 == 1 else x+1 for x in shape)
+        self.shape = tuple(x if x % 2 == 1 else x + 1 for x in shape)
 
     def from_string(self, s):
         # Add padding to initial 2d grid
@@ -17,15 +17,15 @@ class GameOfLife:
             )
 
         padd_x = (self.shape[0] - len(x)) // 2
-        padd_y = (self.shape[1] - len(x[0])) // 2 
-        x = ["." * padd_y + u + "." * padd_y for u in x]  
+        padd_y = (self.shape[1] - len(x[0])) // 2
+        x = ["." * padd_y + u + "." * padd_y for u in x]
         padd = ["." * self.shape[0] for _ in range(padd_x)]
         x = padd + x + padd
         empty_g = ["." * self.shape[1] for r in range(self.shape[0])]
-        result = [] 
-        for i in range(self.shape[3]): 
+        result = []
+        for i in range(self.shape[3]):
             temp = []
-            for j in range(self.shape[2]): 
+            for j in range(self.shape[2]):
                 if j == self.shape[2] // 2 and i == self.shape[3] // 2:
                     temp.append(x)
                 else:
@@ -49,14 +49,15 @@ class GameOfLife:
                         z_coor += k
                         w_coor += p
                         if (
-                            0 <= x_coor < len(self.grid[0][0]) and \
-                            0 <= y_coor < len(self.grid[0][0][0]) and \
-                            0 <= z_coor < len(self.grid[0]) and \
-                            0 <= w_coor < len(self.grid) and \
-                            abs(i) + abs(j) + abs(k) + abs(p) != 0):
+                            0 <= x_coor < len(self.grid[0][0])
+                            and 0 <= y_coor < len(self.grid[0][0][0])
+                            and 0 <= z_coor < len(self.grid[0])
+                            and 0 <= w_coor < len(self.grid)
+                            and abs(i) + abs(j) + abs(k) + abs(p) != 0
+                        ):
                             if self.grid[w_coor][z_coor][x_coor][y_coor] == "#":
                                 actives += 1
-        if (actives == 2 or actives == 3) and cell == "#":            
+        if (actives == 2 or actives == 3) and cell == "#":
             next_status = "#"
         elif actives == 3 and cell == ".":
             next_status = "#"
@@ -84,7 +85,7 @@ class GameOfLife:
             self.grid = result
 
     def get_count_active(self):
-        actives  = 0
+        actives = 0
         for w in range(self.shape[3]):
             for z in range(self.shape[2]):
                 for x in range(self.shape[0]):
@@ -92,7 +93,7 @@ class GameOfLife:
                         if self.grid[w][z][x][y] == "#":
                             actives += 1
 
-        return actives 
+        return actives
 
     def __repr__(self):
         g = []
@@ -101,12 +102,12 @@ class GameOfLife:
                 g.append(f"z={z} | w={w}")
                 g.append("\n".join(self.grid[w][z]))
 
-        repr_val  = "\n\n".join(g)
+        repr_val = "\n\n".join(g)
 
         return repr_val
-                
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     RAW = """.#.
 ..#
 ###"""

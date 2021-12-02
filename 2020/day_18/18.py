@@ -4,6 +4,7 @@ Code provenant de programmation efficace
 Christoph Durr Jill Jênn Vie
 """
 
+
 def parse_input(s):
     x = s.split("\n")
     return x
@@ -31,7 +32,7 @@ def expr_parse(line, priority):
     ops = []
     for tok in line + [";"]:
 
-        if tok in priority: # ça veut dire que tok est un opérateur
+        if tok in priority:  # ça veut dire que tok est un opérateur
 
             while tok != "(" and ops and priority[ops[-1]] >= priority[tok]:
                 right = vals.pop()
@@ -44,20 +45,21 @@ def expr_parse(line, priority):
                 ops.append(tok)
 
         elif tok.isdigit():
-             vals.append(int(tok))
+            vals.append(int(tok))
         else:
             vals.append(tok)
-    
+
     return vals.pop()
+
 
 def run(raw, priority):
     p = expr_parse(list(raw.replace(" ", "")), priority)
-    return expr_eval(p)    
+    return expr_eval(p)
 
 
-if __name__=="__main__":
-    PRIORITY1 = {";": 0, "(": 1, ")": 2, "+": 3, "*": 3}  
-    PRIORITY2 = {";": 0, "(": 1, ")": 2, "+": 4, "*": 3}  
+if __name__ == "__main__":
+    PRIORITY1 = {";": 0, "(": 1, ")": 2, "+": 3, "*": 3}
+    PRIORITY2 = {";": 0, "(": 1, ")": 2, "+": 4, "*": 3}
     #
     # TESTS
     #

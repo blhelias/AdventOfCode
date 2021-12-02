@@ -5,6 +5,7 @@ from collections import namedtuple
 from typing import NamedTuple
 from math import sin, cos, radians, pi, atan2, degrees
 
+
 class Instruction(NamedTuple):
     action: str
     value: int
@@ -13,16 +14,19 @@ class Instruction(NamedTuple):
     def from_string(r):
         return Instruction(r[0], int(r[1:]))
 
+
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(elements_type, f.read().splitlines()))
     return l
+
 
 def rotate(point, angle):
     px, py = point
     qx = math.cos(angle) * px - math.sin(angle) * py
     qy = math.sin(angle) * px + math.cos(angle) * py
     return [int(round(qx, 0)), int(round(qy, 0))]
+
 
 def move_ship_wp1(x, y, wp, instruction):
     action, value = instruction
@@ -40,12 +44,14 @@ def move_ship_wp1(x, y, wp, instruction):
 
     return x, y, wp
 
+
 def solve1(X, way_point):
     x = 0
     y = 0
     for instruction in X:
         x, y, way_point = move_ship_wp1(x, y, way_point, instruction)
     return x, y
+
 
 def move_ship_wp2(x, y, wp, instruction):
     action, value = instruction
@@ -63,17 +69,18 @@ def move_ship_wp2(x, y, wp, instruction):
 
     return x, y, wp
 
+
 def solve2(X, way_point):
     x = 0
     y = 0
-    
+
     for instruction in X:
         x, y, way_point = move_ship_wp2(x, y, way_point, instruction)
 
     return x, y
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     #
     # TESTS
     #
@@ -87,7 +94,7 @@ if __name__=="__main__":
     X = read_input(str)
     # X = list(map(str, RAWS.splitlines()))
     X = [Instruction.from_string(x) for x in X]
-    
+
     #
     # RESULTS
     #

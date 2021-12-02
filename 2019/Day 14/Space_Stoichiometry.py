@@ -2,6 +2,7 @@ import math
 import copy
 from typing import List, Dict, NamedTuple, Tuple
 
+
 class Fuel:
     def __init__(self, fuel: str, quantity, children, needs):
         self.fuel = fuel
@@ -15,6 +16,7 @@ class Fuel:
 
     def __repr__(self):
         return f"{self.quantity} {self.fuel} needs {self.children}, require= {self.require}"
+
 
 class Map:
     def __init__(self):
@@ -38,7 +40,7 @@ class Map:
             parent_name = parent_fuel[1]
 
             children = []
-            needs= []
+            needs = []
             for i in left:
                 c_fuel = i.split(" ")
                 children.append([int(c_fuel[0]), c_fuel[1]])
@@ -63,7 +65,9 @@ class Map:
             if n:
 
                 n.require += (obj[0] + self.remainder[obj[1]][0]) // n.quantity
-                self.remainder[obj[1]][0] = (obj[0] + self.remainder[obj[1]][0]) % n.quantity
+                self.remainder[obj[1]][0] = (
+                    obj[0] + self.remainder[obj[1]][0]
+                ) % n.quantity
 
                 for idx, c in enumerate(n.children):
                     if c[1] != "ORE":
@@ -78,14 +82,15 @@ class Map:
         print(self.remainder)
 
     def results(self):
-        ore_fuel = [v for k,v in self.f_map.items() if "ORE" in [n[1] for n in v.children]]
+        ore_fuel = [
+            v for k, v in self.f_map.items() if "ORE" in [n[1] for n in v.children]
+        ]
 
         cnt = 0
         for fuel in ore_fuel:
             cnt += fuel.require * fuel.needs[0][0]
 
         return cnt
-
 
     def compute(self, start_name: str):
         self.remainder = {k: [0, 0] for k, _ in self.f_map.items()}
@@ -130,12 +135,11 @@ class Map:
                     v[1] = (v[0] + v[1]) - f.quantity
                     v[0] = 0
 
-            if c == 0 and step >=1:
+            if c == 0 and step >= 1:
                 running = False
 
             step += 1
         return count
-
 
 
 if __name__ == "__main__":

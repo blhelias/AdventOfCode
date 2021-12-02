@@ -21,13 +21,15 @@ RAWS = """35
 309
 576"""
 
+
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(elements_type, f.read().splitlines()))
     return l
 
+
 def XMAS(arr, p):
-    if len(arr) == p+1:
+    if len(arr) == p + 1:
         item = set()
         target = arr[-1]
 
@@ -41,14 +43,15 @@ def XMAS(arr, p):
 
     return False
 
+
 def XMAS_w(arr, t):
     for i in range(len(arr)):
         if arr[i] > t:
             continue
-        
+
         if arr[i] == t:
             return arr[i]
-        
+
         l = []
         for j in range(i, len(arr)):
             l.append(arr[j])
@@ -59,18 +62,18 @@ def XMAS_w(arr, t):
                 continue
 
     return None
-            
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     X = read_input(int)
     W = 25
     # DEBUG commands
     # X = list(map(int, RAWS.splitlines()))
     # W = 5
     for i, num in enumerate(X):
-        s = X[i:i+W+1]
+        s = X[i : i + W + 1]
         if not XMAS(s, W):
-            p1 = s[-1] 
+            p1 = s[-1]
             p1_idx = i + 25
             print(p1)
             break

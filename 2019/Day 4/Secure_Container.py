@@ -1,14 +1,17 @@
-PUZZLE_INPUT = "264360-746325" # its a range of digits
+PUZZLE_INPUT = "264360-746325"  # its a range of digits
+
 
 def is_increasing(password: str) -> bool:
-    if ''.join(sorted(password)) == password:
+    if "".join(sorted(password)) == password:
         return True
     return False
+
 
 def has_two_adjacents_digits(password: str) -> bool:
     if len(set(password)) != len(password):
         return True
     return False
+
 
 def has_two_adjacents_digits_not_part_of_larger_group(password: str) -> bool:
     pwd_length = len(password)
@@ -19,17 +22,17 @@ def has_two_adjacents_digits_not_part_of_larger_group(password: str) -> bool:
 
     elif pwd_length - pwd_set_length == 1:
         return True
-    
+
     elif pwd_length - pwd_set_length > 1:
         char = password[0]
         count = 1
         count_occurence = []
 
         for i in range(1, pwd_length):
-            
+
             if password[i] == char:
                 count += 1
-                if i == pwd_length-1:
+                if i == pwd_length - 1:
                     count_occurence.append(count)
             else:
                 count_occurence.append(count)
@@ -41,6 +44,7 @@ def has_two_adjacents_digits_not_part_of_larger_group(password: str) -> bool:
 
     return False
 
+
 def is_valid(password: str) -> bool:
     # The digits never decrease
     if not is_increasing(password):
@@ -51,6 +55,7 @@ def is_valid(password: str) -> bool:
         return False
 
     return True
+
 
 if __name__ == "__main__":
 

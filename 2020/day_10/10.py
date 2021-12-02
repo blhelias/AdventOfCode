@@ -45,6 +45,7 @@ RAWS2 = """28
 10
 3"""
 
+
 def solve1(X):
     X = [0] + X
     X.sort()
@@ -56,30 +57,36 @@ def solve1(X):
 
     return score[1] * score[3]
 
+
 def memoize(f):
     memo = {}
+
     def helper(x):
         if x not in memo:
             memo[x] = f(x)
         return memo[x]
+
     return helper
+
 
 @memoize
 def dp(i):
     if i == len(X) - 1:
         return 1
     ans = 0
-    for j in range(i+1, len(X)):
+    for j in range(i + 1, len(X)):
         if X[j] - X[i] <= 3:
             ans += dp(j)
-    return  ans
+    return ans
+
 
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(elements_type, f.read().splitlines()))
     return l
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     # PArt 1
     X1 = list(map(int, RAWS1.splitlines()))
     X2 = list(map(int, RAWS2.splitlines()))

@@ -9,34 +9,39 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
 logger.addHandler(stream_handler)
 
+
 def add_omitted_zeros(opcode: str) -> str:
-    return '{:>05}'.format(opcode)
+    return "{:>05}".format(opcode)
+
 
 def fill_memory_with_zeros(s, memory_overflow):
     return s + ["0" for _ in range((memory_overflow + 3) - len(s))]
 
-def core_intcode(sequence: List[str],
-                 intcode_input: List[str],
-                 pos: int=0,
-                 relative_base_pos: int=0) -> Tuple[str, str, int, int, int]:
+
+def core_intcode(
+    sequence: List[str],
+    intcode_input: List[str],
+    pos: int = 0,
+    relative_base_pos: int = 0,
+) -> Tuple[str, str, int, int, int]:
     """opcode logic:
-        opcode 1 ADD
-        opcode 2 MULTIPLY
-        opcode 3 SAVE input at the position of its parameter
-        opcode 4 OUTPUT the value of its only parameter
-        Opcode 5 jump-if-true: if the first parameter is non-0,
-                 it sets the instruction pointer to the value from the second parameter.
-                 Otherwise, it does nothing.
-        Opcode 6 jump-if-false: if the first parameter is zero,
-                 it sets the instruction pointer to the value from
-                 the second parameter. Otherwise, it does nothing.
-        Opcode 7 is less than: if the first parameter is less than the second parameter,
-                 it stores 1 in the position given by the third parameter.
-                 Otherwise, it stores 0.
-        Opcode 8 is equals: if the first parameter is equal to the second parameter,
-                 it stores 1 in the position given by the third parameter.
-                 Otherwise, it stores 0.
-        Opcode 9 adjusts the relative base by the value of its only parameter.
+    opcode 1 ADD
+    opcode 2 MULTIPLY
+    opcode 3 SAVE input at the position of its parameter
+    opcode 4 OUTPUT the value of its only parameter
+    Opcode 5 jump-if-true: if the first parameter is non-0,
+             it sets the instruction pointer to the value from the second parameter.
+             Otherwise, it does nothing.
+    Opcode 6 jump-if-false: if the first parameter is zero,
+             it sets the instruction pointer to the value from
+             the second parameter. Otherwise, it does nothing.
+    Opcode 7 is less than: if the first parameter is less than the second parameter,
+             it stores 1 in the position given by the third parameter.
+             Otherwise, it stores 0.
+    Opcode 8 is equals: if the first parameter is equal to the second parameter,
+             it stores 1 in the position given by the third parameter.
+             Otherwise, it stores 0.
+    Opcode 9 adjusts the relative base by the value of its only parameter.
     """
     input_counter = 0
     relative_base = relative_base_pos
@@ -56,19 +61,19 @@ def core_intcode(sequence: List[str],
         if opcode_with_zeros[2] == "0":
             # Position mode
             try:
-                instr1 = int(sequence[int(sequence[pos+1])])
+                instr1 = int(sequence[int(sequence[pos + 1])])
             except IndexError as e:
                 instr1 = 0
         elif opcode_with_zeros[2] == "1":
             # Immediate mode
             try:
-                instr1 = int(sequence[pos+1])
+                instr1 = int(sequence[pos + 1])
             except IndexError as e:
                 instr1 = 0
         elif opcode_with_zeros[2] == "2":
             # Relative mode
             try:
-                instr1 = int(sequence[int(sequence[pos+1]) + relative_base])
+                instr1 = int(sequence[int(sequence[pos + 1]) + relative_base])
             except IndexError as e:
                 instr1 = 0
         else:
@@ -79,19 +84,27 @@ def core_intcode(sequence: List[str],
         if opcode_with_zeros[1] == "0" and opcode_with_zeros[-1] not in ["3", "4", "9"]:
             # Position mode
             try:
-                instr2 = int(sequence[int(sequence[pos+2])])
+                instr2 = int(sequence[int(sequence[pos + 2])])
             except IndexError as e:
                 instr2 = 0
-        elif opcode_with_zeros[1] == "1" and opcode_with_zeros[-1] not in ["3", "4", "9"]:
+        elif opcode_with_zeros[1] == "1" and opcode_with_zeros[-1] not in [
+            "3",
+            "4",
+            "9",
+        ]:
             # Immediate mode
             try:
-                instr2 = int(sequence[pos+2])
+                instr2 = int(sequence[pos + 2])
             except IndexError as e:
                 instr2 = 0
-        elif opcode_with_zeros[1] == "2" and opcode_with_zeros[-1] not in ["3", "4", "9"]:
+        elif opcode_with_zeros[1] == "2" and opcode_with_zeros[-1] not in [
+            "3",
+            "4",
+            "9",
+        ]:
             # Relative mode
             try:
-                instr2 = int(sequence[int(sequence[pos+2]) + relative_base])
+                instr2 = int(sequence[int(sequence[pos + 2]) + relative_base])
             except IndexError as e:
                 instr2 = 0
         else:
@@ -112,10 +125,12 @@ def core_intcode(sequence: List[str],
             elif opcode_with_zeros[-1] == "3":
                 try:
                     if opcode_with_zeros[2] == "2":
-                        sequence[int(sequence[pos+1]) + relative_base] = intcode_input[input_counter]
+                        sequence[
+                            int(sequence[pos + 1]) + relative_base
+                        ] = intcode_input[input_counter]
 
                     else:
-                        sequence[int(sequence[pos+1])] = intcode_input[input_counter]
+                        sequence[int(sequence[pos + 1])] = intcode_input[input_counter]
 
                     input_counter += 1
                 except IndexError:
@@ -132,13 +147,13 @@ def core_intcode(sequence: List[str],
 
             if opcode_with_zeros[-1] == "5":
                 if str(instr1) != "0":
-                    pos = instr2 # jump
+                    pos = instr2  # jump
                     increment = 0
                 else:
                     increment = 3
             elif opcode_with_zeros[-1] == "6":
                 if str(instr1) == "0":
-                    pos = instr2 # jump
+                    pos = instr2  # jump
                     increment = 0
                 else:
                     increment = 3
@@ -146,16 +161,18 @@ def core_intcode(sequence: List[str],
         else:
             if mode_2:
                 offset = relative_base
-                temp_pointer = int(sequence[pos+3])+offset
+                temp_pointer = int(sequence[pos + 3]) + offset
             else:
                 offset = 0
-                temp_pointer = int(sequence[pos+3])+offset
+                temp_pointer = int(sequence[pos + 3]) + offset
 
             if opcode_with_zeros[-1] == "1":
                 try:
                     sequence[temp_pointer] = str(instr1 + instr2)
                 except IndexError as e:
-                    sequence = fill_memory_with_zeros(sequence, int(sequence[pos+3])+offset)
+                    sequence = fill_memory_with_zeros(
+                        sequence, int(sequence[pos + 3]) + offset
+                    )
                     sequence[temp_pointer] = str(instr1 + instr2)
 
             elif opcode_with_zeros[-1] == "2":

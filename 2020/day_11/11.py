@@ -19,6 +19,7 @@ def read_input(elements_type=str):
         l = [list(x) for x in list(map(elements_type, f.read().splitlines()))]
     return l
 
+
 def scan_adjacent(grid, i, j):
     """This function scans all adjacents seats around a given seat"""
     counter = {"#": 0, "L": 0, ".": 0}
@@ -30,6 +31,7 @@ def scan_adjacent(grid, i, j):
                 counter[grid[x][y]] += 1
 
     return counter["#"], counter["L"]
+
 
 def draw_seat_map1(grid):
     h = len(grid)
@@ -49,6 +51,7 @@ def draw_seat_map1(grid):
                 stabilized = False
 
     return new_grid, stabilized
+
 
 def scan_first(grid, i, j):
     """This function scans all adjacents seats around a given seat"""
@@ -75,6 +78,7 @@ def scan_first(grid, i, j):
 
     return counter["#"], counter["L"]
 
+
 def draw_seat_map2(grid):
     h = len(grid)
     w = len(grid[0])
@@ -93,6 +97,7 @@ def draw_seat_map2(grid):
 
     return new_grid, stabilized
 
+
 def count_occ(grid):
     c = 0
     for row in grid:
@@ -101,7 +106,8 @@ def count_occ(grid):
                 c += 1
     return c
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     X = read_input(str)
     # X = [list(x) for x in list(map(str, RAWS.splitlines()))]
     stabilized = False
@@ -109,7 +115,7 @@ if __name__=="__main__":
         X, stabilized = draw_seat_map1(X)
 
     print(count_occ(X))
-    
+
     # PART 2
     X = read_input(str)
     # X = [list(x) for x in list(map(str, RAWS.splitlines()))]

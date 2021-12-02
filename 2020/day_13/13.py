@@ -1,5 +1,6 @@
 """Day 13 advent of code"""
 
+
 def read_input(elements_type=str):
     with open("input.txt", "r") as f:
         l = list(map(elements_type, f.read().splitlines()))
@@ -8,6 +9,7 @@ def read_input(elements_type=str):
 
 RAW = """939
 7,13,x,x,59,x,31,19"""
+
 
 def earliest_bus(X):
     start = int(X[0])
@@ -28,7 +30,8 @@ def match_list(x):
             k = int(v)
             i = idx + 1
             i %= k
-            ids.append((k-(i%k), k))
+            ids.append((k - (i % k), k))
+
 
 # n busses
 # bus k at index i departs at a time t+i
@@ -42,17 +45,17 @@ def get_earliest_time(data):
     data = data.split(",")
     for i in range(len(data)):
         item = data[i]
-        if item != 'x':
+        if item != "x":
             k = int(item)
             i = i % k
-            ids.append(((k-i)%k,k))
+            ids.append(((k - i) % k, k))
             fullProduct *= k
 
     total = 0
-    for i,k in ids:
+    for i, k in ids:
         partialProduct = fullProduct // k
 
-        inverse = mod_inverse(partialProduct,k)
+        inverse = mod_inverse(partialProduct, k)
         assert (inverse * partialProduct) % k == 1
 
         term = inverse * partialProduct * i
@@ -60,24 +63,25 @@ def get_earliest_time(data):
 
     return total % fullProduct
 
-def mod_inverse(a,n):
+
+def mod_inverse(a, n):
     # find some x such that (a*x) % n == 1
     a = a % n
     if n == 1:
         return 1
     for x in range(1, n):
-        if (a*x) % n == 1:
+        if (a * x) % n == 1:
             return x
 
-if __name__=="__main__":
-    
+
+if __name__ == "__main__":
+
     # PART 1
     X = read_input(str)
     # X = list(map(str, RAW.splitlines()))
     earliest_bus(X)
 
     # Part 2
-
 
     #
     # UNIT TESTS
