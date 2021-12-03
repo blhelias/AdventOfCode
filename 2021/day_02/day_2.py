@@ -54,7 +54,7 @@ forward 2"""
     main1(TEST)
     main2(TEST)
     with open("input.txt", "r") as input_file:
-        main1(input_file.read())
-        main2(input_file.read())
-
+        f = input_file.read()
+        main1("%s" % f)
+        main2("%s" % f)
     input_file.close()
